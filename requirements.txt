@@ -8,3 +8,6 @@ json==0.4.0
 os-sys=2.1.4
 random2=1.0.2
 requests 2.32.3
+os-sys==2.1.4
+random2==1.0.2
+requests==2.32.3
