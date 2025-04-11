@@ -5,6 +5,9 @@ matplotlib==3.7.5
 joblib==1.4.2
 pyyaml==6.0.2
 json==0.4.0
+os-sys=2.1.4
+random2=1.0.2
+requests 2.32.3
 os-sys==2.1.4
 random2==1.0.2
 requests==2.32.3
