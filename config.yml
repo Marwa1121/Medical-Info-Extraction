@@ -1,1 +1,68 @@
 
+paths:
+  model_dir: checkpoints/models
+  raw_data_dir: data/raw
+  artifacts_dir: artifacts/
+  output_dir: output
+  log_dir: logs/
+
+  train_path: 
+  test_path: 
+  prod_path: 
+  transformed_data_path: data/processed/transformed_train.csv
+  preprocessor_path: checkpoints/preprocessor/preprocessor.pkl
+
+data:
+  dataset: GeorgiaTech/cnotesum
+  split_size: 0.1
+  random_state : 42
+  template: qwen
+  cutoff_len: 3500
+  overwrite_cache: true
+  preprocessing_num_workers: 16
+
+model: 
+  model_name_or_path: Qwen/Qwen2.5-1.5B-Instruct
+  trust_remote_code: true
+
+method:
+stage: sft
+do_train: true
+finetuning_type: lora
+lora_rank: 64
+lora_target: all
+
+output:
+logging_steps: 10
+save_steps: 500
+plot_loss: true
+# overwrite_output_dir: true
+
+train:
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 4
+learning_rate: 1.0e-4
+num_train_epochs: 3.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+bf16: true
+ddp_timeout: 180000000
+
+eval:
+# val_size: 0.1
+per_device_eval_batch_size: 1
+eval_strategy: steps
+eval_steps: 100
+
+report_to: wandb
+run_name: newsx-finetune-llamafactory
+
+push_to_hub: true
+export_hub_model_id: "esraasaid997"
+hub_private_repo: true
+hub_strategy: checkpoint
+  
+#mlflow:
+ # experiment_name: Insurance_detection
+  #run_name: DescionTree_run
+
