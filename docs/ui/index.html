@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Advanced medical text analysis tool for clinical data extraction and processing">
+  <title>MediAnalyzer | Clinical Data Processing Tool</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --secondary: #10b981;
+      --danger: #ef4444;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.6;
+      color: var(--gray-800);
+      background-color: var(--gray-100);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      padding: 0;
+    }
+
+    header {
+      background: var(--primary);
+      color: var(--white);
+      padding: 1.5rem 2rem;
+      border-bottom: 4px solid var(--primary-dark);
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    h1 i {
+      font-size: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: var(--gray-600);
+    }
+
+    .input-section {
+      padding: 2rem;
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .input-section p {
+      color: var(--gray-600);
+      margin-bottom: 1.5rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      padding: 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.9rem;
+      resize: vertical;
+      transition: border-color 0.2s;
+      margin-bottom: 1.5rem;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      margin-bottom: 1rem;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .file-upload {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .file-upload label {
+      background: var(--primary);
+      color: var(--white);
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background 0.2s;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .file-upload label:hover {
+      background: var(--primary-dark);
+    }
+
+    .file-upload input[type="file"] {
+      display: none;
+    }
+
+    .file-info {
+      color: var(--gray-600);
+      font-size: 0.9rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-md);
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    button i {
+      font-size: 1rem;
+    }
+
+    #processBtn {
+      background: var(--primary);
+      color: var(--white);
+    }
+
+    #processBtn:hover:not(:disabled) {
+      background: var(--primary-dark);
+    }
+
+    #uploadBtn {
+      background: var(--secondary);
+      color: var(--white);
+    }
+
+    #uploadBtn:hover:not(:disabled) {
+      background: #0d9f6e;
+    }
+
+    #askQuestionBtn {
+      background: var(--primary-dark);
+      color: var(--white);
+    }
+
+    #askQuestionBtn:hover:not(:disabled) {
+      background: #1a439f;
+    }
+
+    #loadingMessage {
+      display: none;
+      padding: 2rem;
+      text-align: center;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .spinner {
+      width: 3rem;
+      height: 3rem;
+      border: 4px solid var(--gray-200);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #resultContainer {
+      display: none;
+      padding: 2rem;
+    }
+
+    #questionResultContainer {
+      display: none;
+      padding: 2rem;
+      background-color: var(--gray-100);
+      margin-top: 1rem;
+      border-radius: var(--radius-md);
+    }
+
+    #result, #questionResult {
+      background: var(--gray-100);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      overflow-x: auto;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      max-height: 500px;
+    }
+
+    #result pre, #questionResult pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .error {
+      color: var(--danger);
+      font-weight: 500;
+    }
+
+    .success {
+      color: var(--secondary);
+      font-weight: 500;
+    }
+
+    .file-type-hint {
+      font-size: 0.8rem;
+      color: var(--gray-400);
+      margin-top: 0.5rem;
+    }
+
+    .tab-container {
+      display: flex;
+      border-bottom: 1px solid var(--gray-200);
+      margin-bottom: 1.5rem;
+    }
+
+    .tab {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .tab.active {
+      border-bottom-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        border-radius: 0;
+        box-shadow: none;
+      }
+      
+      header {
+        padding: 1rem;
+      }
+      
+      .input-section, #resultContainer, #questionResultContainer {
+        padding: 1.5rem;
+      }
+      
+      .btn-group {
+        flex-direction: column;
+      }
+      
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-stethoscope"></i> MediAnalyzer</h1>
+    </header>
+    
+    <div class="tab-container">
+      <div class="tab active" onclick="switchTab('analysis')">Medical Analysis</div>
+      <div class="tab" onclick="switchTab('question')">Ask a Question</div>
+    </div>
+    
+    <div id="analysisTab" class="tab-content active">
+      <div class="input-section">
+        <h2>Medical Data Analysis</h2>
+        <p>Transform unstructured clinical notes into structured medical data with AI-powered analysis</p>
+        
+        <textarea id="storyInput" placeholder="Paste medical record here (e.g., patient history, examination findings, lab results, diagnosis)..."></textarea>
+        
+        <div class="file-upload">
+          <label for="fileInput"><i class="fas fa-file-upload"></i> Choose File</label>
+          <input type="file" id="fileInput" accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg,.xlsx,.csv" />
+          <span id="fileName" class="file-info">No file selected</span>
+        </div>
+        <p class="file-type-hint">Supported formats: PDF, Word, Text, Images, Excel, CSV</p>
+        
+        <div class="btn-group">
+          <button onclick="sendStory()" id="processBtn"><i class="fas fa-search"></i> Analyze Text</button>
+          <button onclick="processFile()" id="uploadBtn"><i class="fas fa-cloud-upload-alt"></i> Upload & Process</button>
+        </div>
+      </div>
+      
+      <div id="loadingMessage">
+        <div class="spinner"></div>
+        <p>Processing medical data...</p>
+      </div>
+      
+      <div id="resultContainer">
+        <h2>Analysis Results</h2>
+        <div id="result"></div>
+      </div>
+    </div>
+    
+    <div id="questionTab" class="tab-content">
+      <div class="input-section">
+        <h2>Ask a Medical Question</h2>
+        <p>Get answers to your medical questions with AI-powered web search</p>
+        
+        <input type="text" id="questionInput" placeholder="Enter your medical question here...">
+        
+        <div class="btn-group">
+          <button onclick="askQuestion()" id="askQuestionBtn"><i class="fas fa-question-circle"></i> Ask Question</button>
+        </div>
+      </div>
+      
+      <div id="questionLoadingMessage" style="display: none; padding: 2rem; text-align: center;">
+        <div class="spinner"></div>
+        <p>Searching for answers...</p>
+      </div>
+      
+      <div id="questionResultContainer">
+        <h2>Answer</h2>
+        <div id="questionResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+  <script>
+    const storyInput = document.getElementById("storyInput");
+    const fileInput = document.getElementById("fileInput");
+    const fileName = document.getElementById("fileName");
+    const resultContainer = document.getElementById("resultContainer");
+    const result = document.getElementById("result");
+    const loadingMessage = document.getElementById("loadingMessage");
+    const processBtn = document.getElementById("processBtn");
+    const uploadBtn = document.getElementById("uploadBtn");
+    const questionInput = document.getElementById("questionInput");
+    const questionResultContainer = document.getElementById("questionResultContainer");
+    const questionResult = document.getElementById("questionResult");
+    const questionLoadingMessage = document.getElementById("questionLoadingMessage");
+    const askQuestionBtn = document.getElementById("askQuestionBtn");
+
+    const ANALYSIS_API_URL = "https://a871-34-75-48-175.ngrok-free.app/process-text";
+    const QUESTION_API_URL = "https://fd81-34-75-48-175.ngrok-free.app/answer-question";
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', () => {
+      resultContainer.style.display = 'none';
+      loadingMessage.style.display = 'none';
+      questionResultContainer.style.display = 'none';
+      questionLoadingMessage.style.display = 'none';
+      
+      // Load any saved text from localStorage
+      const savedText = localStorage.getItem('medicalText');
+      if (savedText) {
+        storyInput.value = savedText;
+      }
+    });
+
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Show selected tab
+      document.getElementById(tabName + 'Tab').classList.add('active');
+      document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+    }
+
+    // Save text as user types
+    storyInput.addEventListener('input', () => {
+      localStorage.setItem('medicalText', storyInput.value);
+    });
+
+    fileInput.addEventListener("change", (e) => {
+      if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        fileName.textContent = file.name;
+        fileName.className = 'file-info success';
+        
+        // If it's a text file, read and display contents
+        if (file.type.startsWith('text/') || file.name.endsWith('.txt')) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            storyInput.value = event.target.result;
+            localStorage.setItem('medicalText', storyInput.value);
+          };
+          reader.readAsText(file);
+        }
+      } else {
+        fileName.textContent = "No file selected";
+        fileName.className = 'file-info';
+      }
+    });
+
+    function showLoading(show) {
+      if (show) {
+        loadingMessage.style.display = "flex";
+        processBtn.disabled = true;
+        uploadBtn.disabled = true;
+        resultContainer.style.display = "none";
+      } else {
+        loadingMessage.style.display = "none";
+        processBtn.disabled = false;
+        uploadBtn.disabled = false;
+      }
+    }
+
+    function showQuestionLoading(show) {
+      if (show) {
+        questionLoadingMessage.style.display = "flex";
+        askQuestionBtn.disabled = true;
+        questionResultContainer.style.display = "none";
+      } else {
+        questionLoadingMessage.style.display = "none";
+        askQuestionBtn.disabled = false;
+      }
+    }
+
+    function showResult(data, isError = false) {
+      resultContainer.style.display = "block";
+      
+      localStorage.setItem('medicalText', storyInput.value);
+      
+      if (isError) {
+        result.innerHTML = `<p class="error"><i class="fas fa-exclamation-circle"></i> ${data}</p>`;
+      } else {
+        try {
+          if (typeof data === "string") {
+            data = JSON.parse(data);
+          }
+          
+          const jsonStr = JSON.stringify(data, null, 2);
+          const formattedJson = jsonStr
+            .replace(/"([^"]+)":/g, '"<span style="color: var(--primary)">$1</span>":')
+            .replace(/: ("[^"]+")/g, ': <span style="color: var(--secondary)">$1</span>')
+            .replace(/: ([0-9.]+)/g, ': <span style="color: var(--danger)">$1</span>')
+            .replace(/: (true|false)/g, ': <span style="color: var(--primary-dark)">$1</span>');
+            
+          result.innerHTML = `<pre>${formattedJson}</pre>`;
+          
+          const copyBtn = document.createElement('button');
+          copyBtn.innerHTML = '<i class="far fa-copy"></i> Copy Results';
+          copyBtn.style.marginTop = '1rem';
+          copyBtn.onclick = () => {
+            navigator.clipboard.writeText(jsonStr);
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+              copyBtn.innerHTML = '<i class="far fa-copy"></i> Copy Results';
+            }, 2000);
+          };
+          result.appendChild(copyBtn);
+        } catch (e) {
+          result.innerHTML = `<pre>${data}</pre>`;
+        }
+      }
+      
+      resultContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function showQuestionResult(data, isError = false) {
+      questionResultContainer.style.display = "block";
+      
+      if (isError) {
+        questionResult.innerHTML = `<p class="error"><i class="fas fa-exclamation-circle"></i> ${data}</p>`;
+      } else {
+        try {
+          if (typeof data === "string") {
+            data = JSON.parse(data);
+          }
+          
+          // Display the answer prominently
+          let html = `<div style="margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.6;">`;
+          html += `<p><strong>Question:</strong> ${data.question || 'No question provided'}</p>`;
+          html += `<p><strong>Answer:</strong> ${data.answer || 'No answer found'}</p>`;
+          html += `</div>`;
+          
+          // Display sources if available
+          if (data.sources && data.sources.length > 0) {
+            html += `<h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Sources:</h3>`;
+            html += `<ul style="margin-left: 1.5rem;">`;
+            data.sources.forEach((source, index) => {
+              html += `<li style="margin-bottom: 0.5rem;">`;
+              if (source.link) {
+                html += `<a href="${source.link}" target="_blank" style="color: var(--primary); text-decoration: none;">`;
+                html += `${source.title || 'Source ' + (index + 1)}`;
+                html += `</a>`;
+              } else {
+                html += `${source.title || 'Source ' + (index + 1)}`;
+              }
+              if (source.description) {
+                html += `<div style="font-size: 0.9rem; color: var(--gray-600); margin-top: 0.25rem;">${source.description}</div>`;
+              }
+              html += `</li>`;
+            });
+            html += `</ul>`;
+          }
+          
+          questionResult.innerHTML = html;
+          
+          const copyBtn = document.createElement('button');
+          copyBtn.innerHTML = '<i class="far fa-copy"></i> Copy Answer';
+          copyBtn.style.marginTop = '1rem';
+          copyBtn.onclick = () => {
+            navigator.clipboard.writeText(data.answer || '');
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => {
+              copyBtn.innerHTML = '<i class="far fa-copy"></i> Copy Answer';
+            }, 2000);
+          };
+          questionResult.appendChild(copyBtn);
+        } catch (e) {
+          questionResult.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        }
+      }
+      
+      questionResultContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    async function sendStory() {
+      const text = storyInput.value.trim();
+      if (!text) {
+        showResult("Please enter medical text to analyze", true);
+        storyInput.focus();
+        return;
+      }
+
+      showLoading(true);
+
+      try {
+        const response = await fetch(ANALYSIS_API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ report: text })
+        });
+
+        const contentType = response.headers.get("content-type");
+        const data = contentType && contentType.includes("application/json") 
+          ? await response.json() 
+          : await response.text();
+
+        if (!response.ok) {
+          throw new Error(typeof data === "string" ? data : data?.message || "Server error occurred");
+        }
+
+        showResult(data);
+      } catch (error) {
+        showResult(`Error: ${error.message}`, true);
+        console.error("API Error:", error);
+      } finally {
+        showLoading(false);
+      }
+    }
+
+    async function askQuestion() {
+      const question = questionInput.value.trim();
+      if (!question) {
+        showQuestionResult("Please enter a question", true);
+        questionInput.focus();
+        return;
+      }
+
+      showQuestionLoading(true);
+
+      try {
+        const response = await fetch(QUESTION_API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ question: question })
+        });
+
+        const contentType = response.headers.get("content-type");
+        const data = contentType && contentType.includes("application/json") 
+          ? await response.json() 
+          : await response.text();
+
+        if (!response.ok) {
+          throw new Error(typeof data === "string" ? data : data?.message || "Server error occurred");
+        }
+
+        showQuestionResult(data);
+      } catch (error) {
+        showQuestionResult(`Error: ${error.message}`, true);
+        console.error("API Error:", error);
+      } finally {
+        showQuestionLoading(false);
+      }
+    }
+
+    async function processFile() {
+      const file = fileInput.files[0];
+      if (!file) {
+        showResult("Please select a file to upload", true);
+        return;
+      }
+
+      showLoading(true);
+
+      try {
+        // Handle different file types
+        if (file.type.startsWith('text/') || file.name.endsWith('.txt')) {
+          // Text file processing
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            storyInput.value = event.target.result;
+            sendStory();
+          };
+          reader.readAsText(file);
+        } 
+        else if (file.type.startsWith('image/')) {
+          // Image processing with Tesseract.js OCR
+          result.innerHTML = '<p>Extracting text from image using OCR...</p>';
+          
+          const { data: { text } } = await Tesseract.recognize(
+            file,
+            'eng',
+            { 
+              logger: m => console.log(m) // Optional progress logger
+            }
+          );
+          
+          storyInput.value = text;
+          sendStory();
+        }
+        else {
+          // For other file types (PDF, Word, Excel), you would need additional libraries
+          // Currently showing an error message for unsupported types
+          throw new Error("Unsupported file type. Please upload text or image files only.");
+        }
+      } catch (error) {
+        showResult(`File processing error: ${error.message}`, true);
+        console.error("File Processing Error:", error);
+      } finally {
+        showLoading(false);
+      }
+    }
+  </script>
+</body>
+</html>
